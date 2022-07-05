@@ -1,4 +1,5 @@
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,9 +13,18 @@ public class Junit5Test {
     @InjectMocks private ClassToTest testedService;
 
     @Test
-    public void testTheClass(){
-        Mockito.lenient().when(service.getValue()).thenReturn("Testing");
+    public void testTheClassInjection(){
         Assertions.assertEquals("Testing", testedService.methodThatReturnsWhatTheInterfaceImplReturns());
     }
 
+    @BeforeEach
+    void setup() {
+        Mockito.lenient().when(service.getValue()).thenReturn("Testing");
+    }
+
+    @Test
+    void testDoubleInjectionCase() {
+        ClassUsingTheClass testedClass = new ClassUsingTheClass(testedService);
+        Assertions.assertEquals("Testing", testedClass.doubleCallTesting());
+    }
 }
